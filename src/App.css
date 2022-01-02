@@ -1,0 +1,34 @@
+.App {
+  text-align: center;
+  display: inline-block;
+  margin: 20px auto;
+  width: 100%;
+  margin-top: 150px;
+}
+h1 {
+  text-align: center;
+}
+#operand {
+  width: 270px;
+  padding: 5px;
+  border: 2px solid #ccc;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+.validation {
+  color: red;
+}
+
+.button {
+  margin-left: 5px;
+  padding: 5px 15px;
+  background: #ccc;
+  border: 0 none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background-color: rgb(3, 179, 3);
+}

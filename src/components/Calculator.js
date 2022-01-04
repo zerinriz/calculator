@@ -1,77 +1,52 @@
 import React, { useState } from "react";
 
 function App() {
-  const [rpnInput, setRpnInput] = useState("");
-  const [validation, setValidation] = useState("");
-  const [result, setResult] = useState("");
-
-  const clear = () => {
-    setRpnInput("");
-    setResult("");
-    setValidation("");
-  };
-  const compute = () => {
-    let expr = rpnInput.split(",");
+  const [message, setMessage] = useState("");
+  const [input, setInput] = useState("");
+  const rpnCalculator = (newExpr) => {
+    let expr = newExpr.split(",");
     let stack = [];
-    if (rpnInput === "") {
-      setValidation("You did not enter anything!");
-      return;
-    }
-    if (expr.length === 1) {
-      setValidation("Something went wrong");
-      return;
-    }
-
-    var numberPattern = new RegExp(/^[A-Za-z]+$/);
-
-    if (rpnInput.match(numberPattern)) {
-      setValidation("Only numbers and aritmetic operators are valid");
-      return;
-    }
-    let operands = 0;
-    let operators = 0;
+    let nrCounter = 0;
+    let opCounter = 0;
     for (let i = 0; i < expr.length; i++) {
       if (!isNaN(expr[i]) && isFinite(expr[i])) {
         stack.push(expr[i]);
-        operands++;
+        nrCounter++;
       } else {
+        opCounter++;
         let a = stack.pop();
         let b = stack.pop();
         if (expr[i] === "+") {
           stack.push(parseFloat(a) + parseFloat(b));
-          operators++;
         } else if (expr[i] === "-") {
-          stack.push(parseFloat(b) - parseFloat(a));
-          operators++;
+          stack.push(parseFloat(a) - parseFloat(b));
         } else if (expr[i] === "*") {
           stack.push(parseFloat(a) * parseFloat(b));
-          operators++;
         } else if (expr[i] === "/") {
-          stack.push(parseFloat(b) / parseFloat(a));
-          operators++;
-        } else {
-          setValidation("Only numbers and aritmetic operators are valid");
-          return;
+          stack.push(parseFloat(a) / parseFloat(b));
         }
       }
     }
-    let sum = operands - operators;
-    if (operators >= operands) {
-      setValidation("Something went wrong! Check the number of OPERATORS");
-      return;
-    } else if (sum !== 1) {
-      setValidation("Something went wrong! Check the number of OPERANDS");
-      return;
+    if (input === "") {
+      return setMessage("You did not enter anything!");
     }
-
-    if (stack.length > 1) {
-      setValidation("Something went wrong");
-    } else {
-      let res = "=";
-      res += stack[0];
-      setResult(res);
+    if (
+      nrCounter === opCounter + 1 &&
+      newExpr !== "" &&
+      stack[0] !== undefined
+    ) {
+      setMessage("");
+      setInput(input + "=" + stack[0]);
+    } else if (nrCounter <= opCounter) {
+      setMessage("Something went wrong! Check the number of OPERATORS!");
+    } else if (stack[0] === undefined) {
+      setMessage("Only numbers and arithmetic operators are valid!");
+      setInput("");
+    } else if (nrCounter >= opCounter - 2) {
+      setMessage("Something went wrong! Check the number of OPERANDS!");
     }
   };
+
   return (
     <div className="App">
       <h1>Reverse Polish Notation Calculator</h1>
@@ -79,20 +54,25 @@ function App() {
       <input
         type="text"
         onChange={(e) => {
-          setRpnInput(e.target.value);
-          setValidation("");
+          setInput(e.target.value);
         }}
-        value={rpnInput + result}
+        value={input}
         id="operand"
         placeholder="Enter the operand and operator:2,6,5,5,4,+,-,/"
       />
-      <button className="button" onClick={clear}>
-        Clear
-      </button>
-      <button className="button" onClick={compute}>
+      <button className="button" onClick={() => rpnCalculator(input)}>
         Compute
       </button>
-      <div className="validation">{validation}</div>
+      <button
+        className="button"
+        onClick={() => {
+          setInput("");
+          setMessage("");
+        }}
+      >
+        Clear
+      </button>
+      <div className="validation">{message}</div>
     </div>
   );
 }
